@@ -9,7 +9,7 @@ from tensorflow.python.ops import variables
 filename_train = 'train.tfrecords'
 filename_test = 'test.tfrecords'
 train_dir = 'pre'
-# test_dir = '/资料/pre_test'
+test_dir = '/资料/pre_test'
 
 
 def read_conf(dict):
@@ -45,14 +45,14 @@ resume = True
 with tf.device('/cpu:0'):
     sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True))
     x_train_, y_train_ = read_and_decode(filename_train)
-    # x_test_, y_test_ = read_and_decode(filename_test)
+    x_test_, y_test_ = read_and_decode(filename_test)
     x_train_batch, y_train_batch = tf.train.shuffle_batch([x_train_, y_train_],
                                                           batch_size=batch_size, capacity=2000, min_after_dequeue=1000,
                                                           num_threads=4)  # set the number of threads here
     print(x_train_batch, y_train_batch)
-    # x_test_batch, y_test_batch = tf.train.batch([x_train_, y_train_],
-    #                                             batch_size=batch_size, capacity=2000,
-    #                                             num_threads=4)  # set the number of threads here
+    x_test_batch, y_test_batch = tf.train.batch([x_train_, y_train_],
+                                                batch_size=batch_size, capacity=2000,
+                                                num_threads=4)  # set the number of threads here
 
 
     def inference_batch_norm(x_crop, y_, reuse, is_train):
@@ -127,7 +127,7 @@ with tf.device('/cpu:0'):
     print_freq = 1
     batch_size = 128
     train = read_conf('dict.txt')
-    # test = read_conf('dict2.txt')
+    test = read_conf('dict2.txt')
     n_step_epoch = int(int((train[0].split(':'))[1]) / batch_size)
     n_step = n_epoch * n_step_epoch
 
@@ -172,14 +172,14 @@ with tf.device('/cpu:0'):
             print("   train loss: %f" % (train_loss / n_batch))
             print("   train acc: %f" % (train_acc / n_batch))
 
-            # test_loss, test_acc, n_batch = 0, 0, 0  # 打印测试信息
-            # for _ in range(int(int((test[0].split(':'))[1]) / batch_size)):
-            #     err, ac = sess.run([cost_test, acc_test])
-            #     test_loss += err
-            #     test_acc += ac
-            #     n_batch += 1
-            # print("   test loss: %f" % (test_loss / n_batch))
-            # print("   test acc: %f" % (test_acc / n_batch))
+            test_loss, test_acc, n_batch = 0, 0, 0  # 打印测试信息
+            for _ in range(int(int((test[0].split(':'))[1]) / batch_size)):
+                err, ac = sess.run([cost_test, acc_test])
+                test_loss += err
+                test_acc += ac
+                n_batch += 1
+            print("   test loss: %f" % (test_loss / n_batch))
+            print("   test acc: %f" % (test_acc / n_batch))
 
         if (epoch + 1) % (print_freq * 10) == 0:  # 定义保存model的时机
             print("Save model " + "!" * 10)
