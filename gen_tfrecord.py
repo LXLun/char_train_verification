@@ -21,7 +21,7 @@ cwd = '/资料/pre_test/'
 def dict_gen():
     classes = os.listdir(cwd)
     for index, name in enumerate(classes):
-        write_dict(str(index)+':'+name, 'dict1.txt')
+        write_dict(str(index)+':'+name, 'dict.txt')
 
 def write_dict(txt, result_file_name):
     with open(result_file_name, 'a') as f:
@@ -29,25 +29,25 @@ def write_dict(txt, result_file_name):
         f.writelines(txt+'\n')
         f.close()
 
-# classes = os.listdir(cwd)
-# writer = tf.python_io.TFRecordWriter("test.tfrecords")
-# count = 0
-# for index, name in enumerate(classes):
-#     class_path = cwd + name + "/"
-#     for img_name in os.listdir(class_path):
-#         count += 1
-#         img_path = class_path + img_name
-#         print(img_path)
-#         img = Image.open(img_path)
-#         img = img.resize((32, 32))
-#         # img = img.convert("L")
-#         img_raw = img.tobytes()              #将图片转化为原生bytes
-#         example = tf.train.Example(features=tf.train.Features(feature={
-#             "label": tf.train.Feature(int64_list=tf.train.Int64List(value=[index])),
-#             'img_raw': tf.train.Feature(bytes_list=tf.train.BytesList(value=[img_raw])),
-#         }))
-#         writer.write(example.SerializeToString())  #序列化为字符串
-# writer.close()
-# write_dict('num:'+str(count),'dict2.txt')
+classes = os.listdir(cwd)
+writer = tf.python_io.TFRecordWriter("train.tfrecords")
+count = 0
+for index, name in enumerate(classes):
+    class_path = cwd + name + "/"
+    for img_name in os.listdir(class_path):
+        count += 1
+        img_path = class_path + img_name
+        print(img_path)
+        img = Image.open(img_path)
+        img = img.resize((32, 32))
+        # img = img.convert("L")
+        img_raw = img.tobytes()              #将图片转化为原生bytes
+        example = tf.train.Example(features=tf.train.Features(feature={
+            "label": tf.train.Feature(int64_list=tf.train.Int64List(value=[index])),
+            'img_raw': tf.train.Feature(bytes_list=tf.train.BytesList(value=[img_raw])),
+        }))
+        writer.write(example.SerializeToString())  #序列化为字符串
+writer.close()
+write_dict('num:'+str(count),'dict.txt')
 
 dict_gen()
