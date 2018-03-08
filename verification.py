@@ -17,7 +17,7 @@ def read_conf(dict):
     return dicts
 
 def print_prob(prob):
-    synset = read_conf('dict1.txt')
+    synset = read_conf('dict.txt')
     pred = np.argsort(prob)[::-1]
     # Get top1 label
     top1 = synset[str(pred[0])]
